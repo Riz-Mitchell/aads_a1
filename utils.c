@@ -4,7 +4,7 @@
 
 char*
 convert_string(char *field) {
-    char *new_field = strdup(field)
+    char *new_field = strdup(field);
     return new_field;
 }
 

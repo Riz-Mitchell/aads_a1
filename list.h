@@ -18,4 +18,6 @@ typedef struct list {
 list_t* make_LL (void);
 void free_LL (list_t *list);
 list_t* insert_business (list_t *list, business_t *business_data);
+void print_list(list_t *list);
+
 #endif

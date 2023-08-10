@@ -38,10 +38,12 @@ free_LL (list_t *list) {
 	node_t *curr, *prev;
 	assert(list);
 	curr = list->head;
-	// NEED TO FREE MEMORY THAT THE BUSINESS PTR POINTS TO TOO
+
 	while (curr) {
 		prev = curr;
 		curr = curr->next;
+
+		free_business(prev->business);
 		free(prev);
 	}
 	free(list);
@@ -66,4 +68,36 @@ insert_business (list_t *list, business_t *business_data) {
 		list->tail = new;
 	}
 	return list;
+}
+
+/*
+*   Function: print_list
+*   --------------------
+*   Traverses through linked list and prints all values
+*/
+void
+print_list(list_t *list) {
+	node_t *curr;
+
+	curr = list->head;
+	int n = 0;
+	while (curr->business) {
+		printf("\nCensus_year: %d\n", curr->business->census_year);
+		printf("Block_id: %d\n", curr->business->block_id);
+		printf("Property_id: %d\n", curr->business->property_id);
+		printf("Base_property_id: %d\n", curr->business->base_property_id);
+		printf("Building_address: %s\n", curr->business->building_address);
+		printf("Clue_small_area: %s\n", curr->business->clue_small_area);
+		printf("Business_address: %s\n", curr->business->business_address);
+		printf("Trading_name: %s\n", curr->business->trading_name);
+		printf("Industry_code: %d\n", curr->business->industry_code);
+		printf("Industry_description: %s\n", curr->business->industry_description);
+		printf("Seating_type: %s\n", curr->business->seating_type);
+		printf("Number_of_seats: %d\n", curr->business->number_of_seats);
+		printf("Longitude: %lf\n", curr->business->longitude);
+		printf("Latitude: %lf\n", curr->business->latitude);
+		printf("\n\n\n%d\n\n\n", n);
+		n++;
+		curr = curr->next;
+	}
 }
