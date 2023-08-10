@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include "data.h"
+#include "utils.h"
 
 /*
 *   Function: read_dataset
@@ -11,17 +12,39 @@
 */
 void
 read_dataset (FILE *data_file) {
-    char line[MAX_LINE_LEN + 1];        // Add space for null terminator
-    int first_line = 1;
+    char field[MAX_LINE_LEN + 1], ch;        // Add space for null terminator
+    int first_line = 1, flag = 0, index = 0, field_num = 1;
     business_t *curr_business;
 
-    while (fgets(line, MAX_LINE_LEN + 1, data_file)) {
-
-        if (first_line) {
-                first_line = 0;
-                continue;
+    while ((ch = fgetc(data_file)) != EOF){
+        if (ch == '"') {
+            flag = (flag + 1) % 2;
+            continue;
         }
-        curr_business = parse_line(line);
+        
+        if (!flag) {
+            if (ch == '\n') {
+                field[index] = '\0';
+                //printf("%s\n\n\nNew Line\n\n\n", field);
+                field_num = 1;
+                index = 0;
+            }
+            else if (ch == ',') {
+                field[index] = '\0';
+                //printf("%s\n\n", field);
+                field_num++;
+                index = 0;
+                continue;
+            }
+            else {
+                field[index] = ch;
+                index++;
+            }
+        }
+        else {
+            field[index] = ch;
+            index++;
+        }
     }
     
 }
@@ -33,13 +56,26 @@ read_dataset (FILE *data_file) {
 *   linked list and returns a business_t variable
 */
 business_t*
-parse_line (char *line) {
+insert_field (char *field, int field_num) {
     business_t *curr_business = malloc(sizeof(business_t));
     assert(curr_business);
 
-    sscanf(line, "%d,%d,%d,%d,", curr_business->census_year,
-                                 curr_business->block_id,
-                                 curr_business->property_id,
-                                 curr_business->base_property_id);
+    switch (field_num) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+
+    }
     return curr_business;
 }

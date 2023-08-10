@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "list.h"
 #include "data.h"
+#include "stages.h"
 
 int
 main (int argc, char *argv[]) {
@@ -12,10 +13,17 @@ main (int argc, char *argv[]) {
     FILE *data_file = fopen(argv[2], "r");
     FILE *output_file = fopen(argv[3], "w");
     assert(data_file && output_file);
-    printf("\n%d\n", stage_num);
-    if (stage_num == 1) {
-        read_dataset(data_file);
+
+    switch (stage_num) {
+        case 1:
+            stage_one(data_file)
+        /*
+        *
+        * Future cases for next stages here
+        *
+        */
     }
+    
     fclose(data_file);
     fclose(output_file);
     return 0;
