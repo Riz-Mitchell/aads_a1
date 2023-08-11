@@ -19,22 +19,20 @@ read_dataset (FILE *data_file) {
     int first_line = 1,
         flag = 0,
         index = 0,
-        field_num = 1, 
-        alloc_business = 1;
+        field_num = 0;
     
     business_t *curr_business;
     list_t *list = make_LL();
 
+    while ((ch = fgetc(data_file)) != EOF) {
 
-    while ((ch = fgetc(data_file)) != EOF){
-
-        // Code to ignore first line
+        // Deal with file header
         if (ch != '\n' && first_line) {
             continue;
         } else first_line = 0;
 
-        if (alloc_business) {
-            alloc_business = 0;
+        if (ch != '\n' && field_num == 0) {
+            field_num++;
             curr_business = (business_t*)malloc(sizeof(business_t));
             assert(curr_business);
         }
@@ -43,18 +41,18 @@ read_dataset (FILE *data_file) {
             flag = (flag + 1) % 2;
             continue;
         }
-        
+
         if (!flag) {
 
             // If a newline is detected, that indicates current business to be inserted and new business to be allocated
             if (ch == '\n') {
+                printf("\nnewline/n");
                 field[index] = '\0';
                 curr_business = insert_field(field, field_num, curr_business);
                 list = insert_business(list, curr_business);
 
-                field_num = 1;
-                index = 0;
-                alloc_business = 1;    
+                field_num = 0;
+                index = 0;  
             }
 
             // New field detected, index to be reset and prev field to be inserted into LL
@@ -74,12 +72,13 @@ read_dataset (FILE *data_file) {
             field[index] = ch;
             index++;
         }
+
     }
 
     // Final line insertion upon end of file
-    field[index] = '\0';
+    /*field[index] = '\0';
     curr_business = insert_field(field, field_num, curr_business);
-    list = insert_business(list, curr_business);
+    list = insert_business(list, curr_business);*/
     print_list(list);
 }
 

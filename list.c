@@ -78,10 +78,11 @@ insert_business (list_t *list, business_t *business_data) {
 void
 print_list(list_t *list) {
 	node_t *curr;
+	assert(list);
 
 	curr = list->head;
 	int n = 0;
-	while (curr->business) {
+	while (curr->business != NULL) {
 		printf("\nCensus_year: %d\n", curr->business->census_year);
 		printf("Block_id: %d\n", curr->business->block_id);
 		printf("Property_id: %d\n", curr->business->property_id);
