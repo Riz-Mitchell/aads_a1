@@ -26,7 +26,5 @@ typedef struct business business_t;
 
 // Function definitions
 void read_dataset (FILE *data_file);
-business_t* insert_field (char *field, int field_num, business_t *curr_business);
-void free_business (business_t *curr_business);
 
 #endif

@@ -17,7 +17,9 @@ typedef struct list {
 // Function Definitions
 list_t* make_LL (void);
 void free_LL (list_t *list);
-list_t* insert_business (list_t *list, business_t *business_data);
+list_t* insert_business (list_t *list, node_t *business_node);
 void print_list(list_t *list);
+node_t* insert_field (char *field, int field_num, node_t *business_node);
+void free_business (node_t *business_node);
 
 #endif

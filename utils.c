@@ -19,3 +19,12 @@ convert_double(char *field) {
     double new_field = atof(field);
     return new_field;
 }
+
+int
+check_ch (char ch, int flag) {
+    if (ch == '"') {
+        flag = (flag + 1) % 2;
+        return flag;
+    }
+    return flag;
+}
