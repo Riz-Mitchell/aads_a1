@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include "data.h"
-#include "utils.h"
 #include "list.h"
 
 /*
@@ -177,28 +172,92 @@ free_strings (node_t *curr_node) {
 }
 
 /*
-*   Function: initialize_node
+*   Function: list_search
 *   -------------------------
-*   Takes a pointer to a node and initializes all values to prevent seg fault
+*   Searches a list and returns the number of matching queries
 */
-/*void
-initialize_node(node_t *curr_node) {
-    curr_node->business.census_year = 0;
-    curr_node->business.block_id = 0;
-    curr_node->business.property_id = 0;
-    curr_node->business.base_property_id = 0;
+int
+list_search(list_t *list, char *query, FILE *output_file) {
+    node_t *curr;
+	assert(list);
+    int condition = 1, num_matches = 0;
+	curr = list->head;
+	while (condition) {
+        // Checks for query match and appends to output_file if found
+        if (strcmp(query, curr->business.trading_name) == 0) {
+            num_matches++;
+            output_business(curr->business, output_file);
+        }
+        if (curr->next == NULL) {
+            condition = 0;
+        }
+        else {
+            curr = curr->next;
+        }
+	}
+    return num_matches;
+}
 
-    curr_node->businessbuilding_address = NULL;
-    curr_node->business.clue_small_area = NULL;
-    curr_node->business.business_address = NULL;
-    curr_node->business.trading_name = NULL;
+/*
+*   Function: dataset_to_list
+*   ----------------------
+*   Reads data_file and inputs data into the linked list
+*/
+list_t*
+dataset_to_list (FILE *data_file) {
+    char line[MAX_LINE_LEN + 1];
+    char *s;
+    char *field;
+    char *curr, *prev = NULL;
 
-    curr_node->business.industry_code = 0;
+    int field_num;
+    int first_line = 1;
+    int just_compared = 0;
 
-    curr_node->business.industry_code = 0;
+    list_t *list = make_LL();
+    node_t *curr_node;
 
-    curr_node->business.industry_description = NULL;
-    curr_node->business.seating_type = NULL;
-    curr_node->business.longitude = 0;
-    curr_node->business.latitude = 0;
-}*/
+    while (fgets(line, MAX_LINE_LEN + 1, data_file)) {
+        if (first_line) {
+            first_line = 0;
+            continue;
+        }
+        curr_node = malloc(sizeof(node_t));
+        assert(curr_node);
+        
+        s = line;
+        field_num = 1;
+
+        while ((curr = strtok_r(s, ",", &s))) {
+            if (prev != NULL) {
+                if (compare_fields(prev, curr)) {
+                    field = link_fields(prev, curr);
+                    just_compared = 1;
+                }
+                else {
+                    field = curr;
+                }
+            }
+            else {
+                field = curr;
+            }
+            
+            // Check if a field needing to be linked is being tested or not
+            if (field[0] != '"') {
+                data_to_node(field_num, field, curr_node);
+                field_num++;
+                prev = curr;
+                if (just_compared) {
+                    free(field);
+                    just_compared = 0;
+                }
+            }
+            else {
+                prev = curr;
+            }
+            
+        }
+        node_to_list(list, curr_node);
+    }
+    return list;
+}

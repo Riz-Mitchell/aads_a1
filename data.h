@@ -25,8 +25,10 @@ struct business {
 typedef struct business business_t;
 
 // Function definitions
-void read_dataset (FILE *data_file);
 int compare_fields(char *prev, char *curr);
 char* link_fields(char *prev, char *curr);
+void output_business(business_t curr_business, FILE* output_file);
+char* str_append(char* prev, char* curr);
+void remove_newline(char *query);
 
 #endif

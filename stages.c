@@ -1,8 +1,10 @@
-#include <stdio.h>
 #include "stages.h"
-#include "data.h"
 
 void
-stage_one(FILE *dataset) {
-    read_dataset(dataset);
+stage_one(FILE *dataset, FILE *output_file) {
+    list_t* list = dataset_to_list(dataset);
+
+    read_query(list, output_file);
+
+    free_LL(list);
 }
