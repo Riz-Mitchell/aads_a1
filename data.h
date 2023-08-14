@@ -26,5 +26,7 @@ typedef struct business business_t;
 
 // Function definitions
 void read_dataset (FILE *data_file);
+int compare_fields(char *prev, char *curr);
+char* link_fields(char *prev, char *curr);
 
 #endif

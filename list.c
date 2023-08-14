@@ -44,27 +44,27 @@ free_LL (list_t *list) {
 		prev = curr;
 		curr = curr->next;
 
-		free_business(prev);
+		free_strings(prev);
 		free(prev);
 	}
 	free(list);
 }
 
 /*
-*   Function: insert_business
+*   Function: node_to_list
 *   -------------------------
 *   Inserts a business into the top of the linked list
 */
 list_t*
-insert_business (list_t *list, node_t *business_node) {
-	assert(list && business_node);
+node_to_list (list_t *list, node_t *curr_node) {
+	assert(list && curr_node);
 
-	business_node->next = list->head;
-	list->head = business_node;
+	curr_node->next = list->head;
+	list->head = curr_node;
 
 	// Check if first insertion
 	if (!(list->tail)) {
-		list->tail = business_node;
+		list->tail = curr_node;
 	}
 	return list;
 }
@@ -78,9 +78,9 @@ void
 print_list(list_t *list) {
 	node_t *curr;
 	assert(list);
-
+    int condition = 1;
 	curr = list->head;
-	while (curr != NULL) {
+	while (condition) {
 		printf("\nCensus_year: %d\n", curr->business.census_year);
 		printf("Block_id: %d\n", curr->business.block_id);
 		printf("Property_id: %d\n", curr->business.property_id);
@@ -95,76 +95,81 @@ print_list(list_t *list) {
 		printf("Number_of_seats: %d\n", curr->business.number_of_seats);
 		printf("Longitude: %lf\n", curr->business.longitude);
 		printf("Latitude: %lf\n", curr->business.latitude);
-		curr = curr->next;
+
+        if (curr->next == NULL) {
+            condition = 0;
+        }
+        else {
+            curr = curr->next;
+        }
 	}
 }
 
 /*
-*   Function: insert_field
+*   Function: data_to_node
 *   ------------------------
 *   Takes a field parsed from the csv and adds it to the business
 */
 node_t*
-insert_field (char *field, int field_num, node_t *business_node) {
+data_to_node (int field_num, char field[], node_t *curr_node) {
 
     switch (field_num) {
         // Integer type insertions:
         case 1:
-            business_node->business.census_year = convert_int(field);
-            printf("\n\nhere\n\n");
+            curr_node->business.census_year = convert_int(field);
             break;
         case 2:
-            business_node->business.block_id = convert_int(field);
+            curr_node->business.block_id = convert_int(field);
             break;
         case 3:
-            business_node->business.property_id = convert_int(field);
+            curr_node->business.property_id = convert_int(field);
             break;
         case 4:
-            business_node->business.base_property_id = convert_int(field);
+            curr_node->business.base_property_id = convert_int(field);
             break;
         
         // String type insertions:
         case 5:
-            business_node->business.building_address = convert_string(field);
+            curr_node->business.building_address = convert_string(field);
             break;
         case 6:
-            business_node->business.clue_small_area = convert_string(field);
+            curr_node->business.clue_small_area = convert_string(field);
             break;
         case 7:
-            business_node->business.business_address = convert_string(field);
+            curr_node->business.business_address = convert_string(field);
             break;
         case 8:
-            business_node->business.trading_name = convert_string(field);
+            curr_node->business.trading_name = convert_string(field);
             break;
         
         // Integer type insertion:
         case 9:
-            business_node->business.industry_code = convert_int(field);
+            curr_node->business.industry_code = convert_int(field);
             break;
 
         // String type insertion:
         case 10:
-            business_node->business.industry_description = convert_string(field);
+            curr_node->business.industry_description = convert_string(field);
             break;
         case 11:
-            business_node->business.seating_type = convert_string(field);
+            curr_node->business.seating_type = convert_string(field);
             break;
 
         // Integer type insertion:
         case 12:
-            business_node->business.number_of_seats = convert_int(field);
+            curr_node->business.number_of_seats = convert_int(field);
             break;
         
         // Double type insertion
         case 13:
-            business_node->business.longitude = convert_double(field);
+            curr_node->business.longitude = convert_double(field);
             break;
         case 14:
-            business_node->business.latitude = convert_double(field);
+            curr_node->business.latitude = convert_double(field);
             break;
 
     }
-    return business_node;
+    return curr_node;
 }
 
 /*
@@ -173,11 +178,11 @@ insert_field (char *field, int field_num, node_t *business_node) {
 *   Takes a business and frees the char pointers
 */
 void
-free_business (node_t *business_node) {
-    free(business_node->business.building_address);
-    free(business_node->business.clue_small_area);
-    free(business_node->business.business_address);
-    free(business_node->business.trading_name);
-    free(business_node->business.industry_description);
-    free(business_node->business.seating_type);
+free_strings (node_t *curr_node) {
+    free(curr_node->business.building_address);
+    free(curr_node->business.clue_small_area);
+    free(curr_node->business.business_address);
+    free(curr_node->business.trading_name);
+    free(curr_node->business.industry_description);
+    free(curr_node->business.seating_type);
 }

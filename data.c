@@ -13,65 +13,79 @@
 */
 void
 read_dataset (FILE *data_file) {
-    char field[MAX_FIELD_LEN + 1],
-         ch;
+    char line[MAX_LINE_LEN + 1];
+    char *s;
+    char *field;
+    char *curr, *prev = NULL;
 
-    int flag = 0,
-        index = 0,
-        field_num = 1,
-        check_line = 0;
-    int n = 0;
+    int field_num;
+    int first_line = 1;
 
-    list_t *list = make_LL();
-    node_t *business_node;
+    //list_t *list = make_LL();
+    //node_t *curr_node;
 
-    while ((ch = fgetc(data_file)) != EOF){
-
-        if (check_line == 0) {
-            if (ch == '\n') {
-                check_line = 1;
-            }
+    while (fgets(line, MAX_LINE_LEN + 1, data_file)) {
+        if (first_line) {
+            first_line = 0;
             continue;
         }
+        //curr_node = (node_t*)malloc(sizeof(node_t));
+        s = line;
+        field_num = 1;
 
-        if (check_ch(ch, flag)) {
-            continue;
-        }
-
-        if (!flag) {
-            if (ch == '\n') {
-                field[index] = '\0';
-                business_node = insert_field(field, field_num, business_node);  // Change to insert field into node
-                list = insert_business(list, business_node);
-                business_node = (node_t*)malloc(sizeof(node_t));
-                printf("\n\nN is %d\n\n",n);
-                n++;
-                assert(business_node);
-
-                field_num = 1;
-                index = 0;
-            }
-            else if (ch == ',') {
-                field[index] = '\0';
-                business_node = insert_field(field, field_num, business_node);
-
-                field_num++;
-                index = 0;
+        while ((curr = strtok_r(s, ",", &s))) {
+            if (prev != NULL) {
+                if (compare_fields(prev, curr)) {
+                    field = link_fields(prev, curr);
+                }
+                else {
+                    field = curr;
+                }
             }
             else {
-                field[index] = ch;
-                index++;
+                field = curr;
             }
-        }
-        else {
-            field[index] = ch;
-            index++;
+            
+            // Check if a field needing to be linked is being tested or not
+            if (field[0] != '"') {
+                //data_to_node
+                printf("Field Number  %d is %s\n\n\n", field_num, field);
+                field_num++;
+                prev = curr;
+            }
+            else {
+                prev = curr;
+            }
+            
         }
     }
-    printf("\n\nyeye\n\n");
-    // Final insertion
-    print_list(list);
-    printf("\n\nyeye\n\n");
-    free_LL(list);
+}
+
+/*
+*   Function: compare_fields
+*   ------------------------
+*   Compares two prospective fields to check if they need to be linked
+*/
+int
+compare_fields(char *prev, char *curr) {
+
+    if (prev[0] == '"' && curr[strlen(curr) - 1] == '"') {
+        return 1;       // Return 1 if fields are supposed to be linked
+    }
+    return 0;       // Returns 0 if fields are fine as is
+}
+
+/*
+*   Function: link_fields
+*   ------------------------
+*   Links two fields if they both contained quotation marks at specified areas
+*/
+char*
+link_fields(char *prev, char *curr) {
+    // Get rid of the quotation marks and the \ characters
+    prev += 1;
+    curr[strlen(curr) - 1] = '\0';
+    strcat(prev, curr);
+    return prev;
 }
 
