@@ -21,15 +21,17 @@ read_dataset (FILE *data_file) {
     int field_num;
     int first_line = 1;
 
-    //list_t *list = make_LL();
-    //node_t *curr_node;
+    list_t *list = make_LL();
+    node_t *curr_node;
 
     while (fgets(line, MAX_LINE_LEN + 1, data_file)) {
         if (first_line) {
             first_line = 0;
             continue;
         }
-        //curr_node = (node_t*)malloc(sizeof(node_t));
+        curr_node = malloc(sizeof(node_t));
+        assert(curr_node);
+        //initialize_node(curr_node);
         s = line;
         field_num = 1;
 
@@ -48,7 +50,7 @@ read_dataset (FILE *data_file) {
             
             // Check if a field needing to be linked is being tested or not
             if (field[0] != '"') {
-                //data_to_node
+                data_to_node(field_num, field, curr_node);
                 printf("Field Number  %d is %s\n\n\n", field_num, field);
                 field_num++;
                 prev = curr;
@@ -58,7 +60,9 @@ read_dataset (FILE *data_file) {
             }
             
         }
+        node_to_list(list, curr_node);
     }
+    free_LL(list);
 }
 
 /*

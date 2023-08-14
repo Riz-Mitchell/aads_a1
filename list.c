@@ -3,18 +3,7 @@
 #include <assert.h>
 #include "data.h"
 #include "utils.h"
-
-typedef struct node node_t;
-
-struct node {
-    business_t business;
-    node_t *next;
-};
-
-typedef struct list {
-    node_t *head;
-    node_t *tail;
-} list_t;
+#include "list.h"
 
 /*
 *   Function: make_LL
@@ -40,7 +29,7 @@ free_LL (list_t *list) {
 	assert(list);
 	curr = list->head;
 
-	while (curr) {
+	while (curr != NULL) {
 		prev = curr;
 		curr = curr->next;
 
@@ -111,7 +100,7 @@ print_list(list_t *list) {
 *   Takes a field parsed from the csv and adds it to the business
 */
 node_t*
-data_to_node (int field_num, char field[], node_t *curr_node) {
+data_to_node (int field_num, char *field, node_t *curr_node) {
 
     switch (field_num) {
         // Integer type insertions:
@@ -174,7 +163,7 @@ data_to_node (int field_num, char field[], node_t *curr_node) {
 
 /*
 *   Function: free_business
-*   ------------------------
+*   -----------------------
 *   Takes a business and frees the char pointers
 */
 void
@@ -186,3 +175,30 @@ free_strings (node_t *curr_node) {
     free(curr_node->business.industry_description);
     free(curr_node->business.seating_type);
 }
+
+/*
+*   Function: initialize_node
+*   -------------------------
+*   Takes a pointer to a node and initializes all values to prevent seg fault
+*/
+/*void
+initialize_node(node_t *curr_node) {
+    curr_node->business.census_year = 0;
+    curr_node->business.block_id = 0;
+    curr_node->business.property_id = 0;
+    curr_node->business.base_property_id = 0;
+
+    curr_node->businessbuilding_address = NULL;
+    curr_node->business.clue_small_area = NULL;
+    curr_node->business.business_address = NULL;
+    curr_node->business.trading_name = NULL;
+
+    curr_node->business.industry_code = 0;
+
+    curr_node->business.industry_code = 0;
+
+    curr_node->business.industry_description = NULL;
+    curr_node->business.seating_type = NULL;
+    curr_node->business.longitude = 0;
+    curr_node->business.latitude = 0;
+}*/

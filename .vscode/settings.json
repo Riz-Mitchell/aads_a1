@@ -5,6 +5,7 @@
         "data.h": "c",
         "stages.h": "c",
         "assert.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "list.h": "c"
     }
 }
