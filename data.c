@@ -40,7 +40,7 @@ link_fields(char *prev, char *curr) {
 */
 void
 output_business(business_t curr_business, FILE* output_file) {
-    fprintf(output_file, "--> census_year: %d || ", curr_business.census_year);
+    fprintf(output_file, "\n--> census_year: %d || ", curr_business.census_year);
     fprintf(output_file, "block_id: %d || ", curr_business.block_id);
     fprintf(output_file, "property_id: %d || ", curr_business.property_id);
     fprintf(output_file, "base_property_id: %d || ", curr_business.base_property_id);

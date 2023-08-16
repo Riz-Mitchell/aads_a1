@@ -16,7 +16,7 @@ read_query(list_t *list, FILE *output_file) {
         // Remove the trailing newline if there is one
         remove_newline(query);
 
-        fprintf(output_file, "%s\n", query);
+        fprintf(output_file, "%s", query);
         num_matches = list_search(list, query, output_file);
         if (num_matches) {
             printf("%s --> %d\n", query, num_matches);

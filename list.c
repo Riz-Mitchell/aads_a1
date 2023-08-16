@@ -180,20 +180,15 @@ int
 list_search(list_t *list, char *query, FILE *output_file) {
     node_t *curr;
 	assert(list);
-    int condition = 1, num_matches = 0;
+    int num_matches = 0;
 	curr = list->head;
-	while (condition) {
+	while (curr != NULL) {
         // Checks for query match and appends to output_file if found
         if (strcmp(query, curr->business.trading_name) == 0) {
             num_matches++;
             output_business(curr->business, output_file);
         }
-        if (curr->next == NULL) {
-            condition = 0;
-        }
-        else {
-            curr = curr->next;
-        }
+        curr = curr->next;
 	}
     return num_matches;
 }
