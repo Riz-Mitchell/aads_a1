@@ -1,3 +1,7 @@
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
+
 #ifndef _UTILS_H_
 #define _UTILS_H_
 

@@ -36,8 +36,9 @@ free_LL (list_t *list) {
 
 /*
 *   Function: node_to_list
-*   -------------------------
-*   Inserts a business into the top of the linked list
+*   ----------------------
+*   Takes a node and list input and places the node
+*   at the top of the linked list
 */
 list_t*
 node_to_list (list_t *list, node_t *curr_node) {
@@ -54,45 +55,13 @@ node_to_list (list_t *list, node_t *curr_node) {
 }
 
 /*
-*   Function: print_list
-*   --------------------
-*   Traverses through linked list and prints all values
-*/
-void
-print_list(list_t *list) {
-	node_t *curr;
-	assert(list);
-    int condition = 1;
-	curr = list->head;
-	while (condition) {
-		printf("\nCensus_year: %d\n", curr->business.census_year);
-		printf("Block_id: %d\n", curr->business.block_id);
-		printf("Property_id: %d\n", curr->business.property_id);
-		printf("Base_property_id: %d\n", curr->business.base_property_id);
-		printf("Building_address: %s\n", curr->business.building_address);
-		printf("Clue_small_area: %s\n", curr->business.clue_small_area);
-		printf("Business_address: %s\n", curr->business.business_address);
-		printf("Trading_name: %s\n", curr->business.trading_name);
-		printf("Industry_code: %d\n", curr->business.industry_code);
-		printf("Industry_description: %s\n", curr->business.industry_description);
-		printf("Seating_type: %s\n", curr->business.seating_type);
-		printf("Number_of_seats: %d\n", curr->business.number_of_seats);
-		printf("Longitude: %lf\n", curr->business.longitude);
-		printf("Latitude: %lf\n", curr->business.latitude);
-
-        if (curr->next == NULL) {
-            condition = 0;
-        }
-        else {
-            curr = curr->next;
-        }
-	}
-}
-
-/*
 *   Function: data_to_node
 *   ------------------------
-*   Takes a field parsed from the csv and adds it to the business
+*   Takes data fields read in from a file and adds them
+*   to their respective nodes
+*
+*   The function uses "field_num" to tell which field 
+*   is being handled
 */
 node_t*
 data_to_node (int field_num, char *field, node_t *curr_node) {
@@ -157,9 +126,10 @@ data_to_node (int field_num, char *field, node_t *curr_node) {
 }
 
 /*
-*   Function: free_business
-*   -----------------------
-*   Takes a business and frees the char pointers
+*   Function: free_strings
+*   ----------------------
+*   Takes a node and free's the memory allocated for its
+*   string fields
 */
 void
 free_strings (node_t *curr_node) {
@@ -173,8 +143,10 @@ free_strings (node_t *curr_node) {
 
 /*
 *   Function: list_search
-*   -------------------------
-*   Searches a list and returns the number of matching queries
+*   ---------------------
+*   Searches a list and prints business's with matching 
+*   queries to "output_file" returns the number of 
+*   matching queries
 */
 int
 list_search(list_t *list, char *query, FILE *output_file) {
@@ -227,9 +199,8 @@ dataset_to_list (FILE *data_file) {
             // printf("\n\nField is %s\n\n", curr);
             if (prev != NULL) {
                 if (compare_fields(prev, curr)) {
-                    printf("prev is %s\ncurr is %s\n", prev, curr);
+                    
                     field = link_fields(prev, curr);
-                    printf("Field is %s\n", field);
                     just_compared = 1;
                 }
                 else {
@@ -240,13 +211,13 @@ dataset_to_list (FILE *data_file) {
                 field = curr;
             }
             
-            // Check if a field needing to be linked is being tested or not
+            // Check to see if current field is meant to be added or not
             if (field[0] != '"') {
                 data_to_node(field_num, field, curr_node);
                 field_num++;
                 prev = curr;
+
                 if (just_compared) {
-                    printf("+\n");
                     free(field);
                     just_compared = 0;
                 }

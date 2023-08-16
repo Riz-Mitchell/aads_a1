@@ -1,9 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "data.h"
-#include "utils.h"
 
 /*
 *   Function: compare_fields

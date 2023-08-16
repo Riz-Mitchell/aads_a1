@@ -23,7 +23,6 @@ typedef struct list {
 list_t* make_LL (void);
 void free_LL (list_t *list);
 list_t* node_to_list(list_t *list, node_t *curr_node);
-void print_list(list_t *list);
 node_t* data_to_node(int field_num, char *field, node_t *curr_node);
 void free_strings(node_t *business_node);
 int list_search(list_t *list, char *query, FILE *output_file);

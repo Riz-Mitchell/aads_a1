@@ -1,4 +1,8 @@
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include "utils.h"
 
 #ifndef _DATA_H_
 #define _DATA_H_
