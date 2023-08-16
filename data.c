@@ -29,6 +29,8 @@ link_fields(char *prev, char *curr) {
     // Get rid of the quotation marks and the \ characters
     prev += 1;
     curr[strlen(curr) - 1] = '\0';
+    printf("prev is %s\ncurr is %s\n", prev, curr);
+
 
     return str_append(prev, curr);
 }
@@ -62,15 +64,21 @@ str_append(char* prev, char* curr) {
     char buffer[MAX_FIELD_LEN * 2 + 1];
     char *new;
     
-    for (int i = 0; prev[i] == '\0'; i++) {
+    for (int i = 0; prev[i] != '\0'; i++) {
         buffer[index] = prev[i];
         index++;
     }
-    for (int i = 0; curr[i] == '\0'; i++) {
+
+    // Account for comma removed when tokenizing
+    buffer[index] = ',';
+    index++;
+
+    for (int i = 0; curr[i] != '\0'; i++) {
         buffer[index] = curr[i];
         index++;
     }
     buffer[index] = '\0';
+    printf("Buffer is %s", buffer);
     new = strdup(buffer);
     return new;
 }

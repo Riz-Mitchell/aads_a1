@@ -222,11 +222,14 @@ dataset_to_list (FILE *data_file) {
         
         s = line;
         field_num = 1;
-
+        // Separate fields by ','
         while ((curr = strtok_r(s, ",", &s))) {
+            // printf("\n\nField is %s\n\n", curr);
             if (prev != NULL) {
                 if (compare_fields(prev, curr)) {
+                    printf("prev is %s\ncurr is %s\n", prev, curr);
                     field = link_fields(prev, curr);
+                    printf("Field is %s\n", field);
                     just_compared = 1;
                 }
                 else {
@@ -243,6 +246,7 @@ dataset_to_list (FILE *data_file) {
                 field_num++;
                 prev = curr;
                 if (just_compared) {
+                    printf("+\n");
                     free(field);
                     just_compared = 0;
                 }
