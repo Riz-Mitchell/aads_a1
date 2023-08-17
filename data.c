@@ -24,8 +24,6 @@ link_fields(char *prev, char *curr) {
     // Get rid of the quotation marks and the \ characters
     prev += 1;
     curr[strlen(curr) - 1] = '\0';
-    printf("prev is %s\ncurr is %s\n", prev, curr);
-
 
     return str_append(prev, curr);
 }
@@ -73,7 +71,6 @@ str_append(char* prev, char* curr) {
         index++;
     }
     buffer[index] = '\0';
-    printf("Buffer is %s", buffer);
     new = strdup(buffer);
     return new;
 }

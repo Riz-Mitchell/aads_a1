@@ -41,14 +41,16 @@ free_LL (list_t *list) {
 *   at the top of the linked list
 */
 list_t*
-node_to_list (list_t *list, node_t *curr_node) {
+node_to_list(list_t *list, node_t *curr_node) {
 	assert(list && curr_node);
+	
+	curr_node->next = NULL;
 
-	curr_node->next = list->head;
-	list->head = curr_node;
-
-	// Check if first insertion
-	if (!(list->tail)) {
+    // Check if first insertion
+	if (list->tail==NULL) {
+		list->head = list->tail = curr_node;
+	} else {
+		list->tail->next = curr_node;
 		list->tail = curr_node;
 	}
 	return list;
