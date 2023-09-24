@@ -1,30 +1,5 @@
 #include "binarysearch.h"
 
-/*
-// Binary Search in C
-
-#include <stdio.h>
-
-int binarySearch(int array[], int x, int low, int high) {
-  // Repeat until the pointers low and high meet each other
-  while (left <= right) {
-        int mid = left + (right - left) / 2;
-        int cmp = strcmp(arr[mid], target);
-
-        if (cmp == 0) {
-            return mid; // Found the target string at index mid
-        } else if (cmp < 0) {
-            left = mid + 1; // Target is in the right half
-        } else {
-            right = mid - 1; // Target is in the left half
-        }
-    }
-
-
-  return -1;
-}
-*/
-
 /**
  * Function: binary_search
  * -----------------------
@@ -99,13 +74,16 @@ check_prefix(char *prefix, char *str, int *s_comp, int *c_comp) {
             match = 0;
             if (i + 1 == strlen(prefix)) {
                 (*s_comp)++;
+                (*c_comp)++;    // Extra for the null byte
                 return match;
             }
         }
+        // Search lower half
         else if (prefix[i] < str[i]) {
             match = -1;
             break;
         }
+        // Search upper half
         else {
             match = 1;
             break;
