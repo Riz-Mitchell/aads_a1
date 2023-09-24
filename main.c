@@ -12,6 +12,10 @@ main (int argc, char *argv[]) {
     switch (stage_num) {
         case 1:
             stage_one(data_file, output_file);
+            break;
+        case 2:
+            stage_two(data_file, output_file);
+            break;
         /*
         *
         * Future cases for next stages here

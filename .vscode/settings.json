@@ -6,6 +6,12 @@
         "stages.h": "c",
         "assert.h": "c",
         "utils.h": "c",
-        "list.h": "c"
-    }
+        "list.h": "c",
+        "array.h": "c",
+        "query.h": "c",
+        "quicksort.h": "c"
+    },
+    "editor.rulers": [
+        {"column": 100, "color": "#00ffff"}
+    ],
 }
