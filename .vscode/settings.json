@@ -14,4 +14,20 @@
     "editor.rulers": [
         {"column": 100, "color": "#00ffff"}
     ],
+    "workbench.colorCustomizations": {
+        "toolbar.hoverBackground": "#ff0000",
+    }
+
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "entity.name.function.c",
+                ],
+                "settings": {
+                    "foreground": "#FF5A37",
+                }
+            }
+        ]
+    }
 }
