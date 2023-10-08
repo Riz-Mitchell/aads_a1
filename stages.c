@@ -35,3 +35,17 @@ stage_two(FILE *dataset, FILE *output_file) {
     
     free_array(dynArray);
 }
+
+void
+stage_three(FILE *dataset, FILE *output_file) {
+    tree_t *tree = create_tree();
+
+    tree = data_to_tree(dataset, tree, output_file);
+
+    // output_tree(tree->root, output_file);
+
+    free_tree(tree->root);
+    free(tree);
+
+    
+}

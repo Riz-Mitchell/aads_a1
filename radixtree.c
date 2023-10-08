@@ -1,5 +1,11 @@
 #include "radixtree.h"
 
+
+
+/**
+ * Function: create_tree
+ * Creates a radix tree
+*/
 tree_t*
 create_tree() {
     tree_t *new_tree = malloc(sizeof(tree_t));
@@ -10,11 +16,36 @@ create_tree() {
 }
 
 /**
+ * Function: free_tree
+ * -------------------
+ * Frees all data associated with the input root
+*/
+void
+free_tree(branch_t *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    free_tree(root->branchA);
+    free_tree(root->branchB);
+
+    free(root->data.building_address);
+    free(root->data.clue_small_area);
+    free(root->data.business_address);
+    free(root->data.trading_name);
+    free(root->data.industry_description);
+    free(root->data.seating_type);
+    free(root->prefix);
+    free(root);
+}
+
+/**
  * Function: data_to_tree
  * ----------------------
+ * Inserts the data from "data_file" into the radix tree
 */
 tree_t*
-data_to_tree(FILE *data_file, tree_t *tree) {
+data_to_tree(FILE *data_file, tree_t *tree, FILE *output_file) {
     char line[MAX_LINE_LEN + 1];
     char *s;
     char *field;
@@ -24,15 +55,17 @@ data_to_tree(FILE *data_file, tree_t *tree) {
     int first_line = 1;
     int just_compared = 0;
 
-    node_t *curr_node;
+    branch_t *curr_branch;
 
     while (fgets(line, MAX_LINE_LEN + 1, data_file)) {
         if (first_line) {
             first_line = 0;
             continue;
         }
-        curr_node = malloc(sizeof(node_t));
-        assert(curr_node);
+        printf("\n\n\nhello\n\n\n");
+        curr_branch = malloc(sizeof(branch_t));
+        printf("\n\n\nnoooooo\n\n\n");
+        assert(curr_branch);
         
         s = line;
         field_num = 1;
@@ -55,7 +88,7 @@ data_to_tree(FILE *data_file, tree_t *tree) {
             
             // Check to see if current field is meant to be added or not
             if (field[0] != '"') {
-                data_to_node(field_num, field, curr_node);
+                data_to_branch(field_num, field, curr_branch);
                 field_num++;
                 prev = curr;
 
@@ -69,112 +102,152 @@ data_to_tree(FILE *data_file, tree_t *tree) {
             }
             
         }
-        curr_node->prefix = string_to_binary(curr_node->data.trading_name);
-        curr_node->prefix_bits = strlen(curr_node->prefix);
-        curr_node->branchA = NULL;
-        curr_node->branchB = NULL;
-        insert_node(tree, curr_node);
+        curr_branch->prefix = string_to_binary(curr_branch->data.trading_name);
+        curr_branch->prefix_bits = strlen(curr_branch->prefix);
+        fprintf(output_file, "\nTrading name in binary is: %s and is %d bits long", curr_branch->prefix, curr_branch->prefix_bits);
+        output_business(curr_branch->data, output_file);
+        curr_branch->branchA = NULL;
+        curr_branch->branchB = NULL;
+        tree = insert_branch(tree, curr_branch);
     }
     return tree;
 }
 
 void
-data_to_node(int field_num, char *field, node_t *curr_node) {
+data_to_branch(int field_num, char *field, branch_t *curr_branch) {
     switch (field_num) {
         // Integer type insertions:
         case 1:
-            curr_node->data.census_year = convert_int(field);
+            curr_branch->data.census_year = convert_int(field);
             break;
         case 2:
-            curr_node->data.block_id = convert_int(field);
+            curr_branch->data.block_id = convert_int(field);
             break;
         case 3:
-            curr_node->data.property_id = convert_int(field);
+            curr_branch->data.property_id = convert_int(field);
             break;
         case 4:
-            curr_node->data.base_property_id = convert_int(field);
+            curr_branch->data.base_property_id = convert_int(field);
             break;
         
         // String type insertions:
         case 5:
-            curr_node->data.building_address = convert_string(field);
+            curr_branch->data.building_address = convert_string(field);
             break;
         case 6:
-            curr_node->data.clue_small_area = convert_string(field);
+            curr_branch->data.clue_small_area = convert_string(field);
             break;
         case 7:
-            curr_node->data.business_address = convert_string(field);
+            curr_branch->data.business_address = convert_string(field);
             break;
         case 8:
-            curr_node->data.trading_name = convert_string(field);
+            curr_branch->data.trading_name = convert_string(field);
             break;
         
         // Integer type insertion:
         case 9:
-            curr_node->data.industry_code = convert_int(field);
+            curr_branch->data.industry_code = convert_int(field);
             break;
 
         // String type insertion:
         case 10:
-            curr_node->data.industry_description = convert_string(field);
+            curr_branch->data.industry_description = convert_string(field);
             break;
         case 11:
-            curr_node->data.seating_type = convert_string(field);
+            curr_branch->data.seating_type = convert_string(field);
             break;
 
         // Integer type insertion:
         case 12:
-            curr_node->data.number_of_seats = convert_int(field);
+            curr_branch->data.number_of_seats = convert_int(field);
             break;
         
         // Double type insertion
         case 13:
-            curr_node->data.longitude = convert_double(field);
+            curr_branch->data.longitude = convert_double(field);
             break;
         case 14:
-            curr_node->data.latitude = convert_double(field);
+            curr_branch->data.latitude = convert_double(field);
             break;
 
     }
-    return curr_node;
 }
 
 /**
- * Function: insert_node
+ * Function: insert_branch
  * ---------------------
- * Takes a tree and node as input and inserts the node into the tree
+ * Takes a tree and branch as input and inserts the branch into the tree
 */
-void
-insert_node(tree_t *tree, node_t *inserting) {
-    node_t *curr = tree->root, *prev = NULL;
-    int result;
+tree_t*
+insert_branch(tree_t *tree, branch_t *inserting) {
+    branch_t *curr = tree->root, *prev = NULL;
+    int result, cond = 0;;
     // First insertion
     if (curr == NULL) {
         curr = inserting;
     }
     else {
         while (1) {
-            result = compare_prefix(curr->prefix, insert_node);
+            result = compare_prefix(curr->prefix, inserting->prefix);
             if (result == 0) {
                 /* Insert duplicate case */
+                break;
             }
             else if (result == 1) {
-                split_nodes(curr, inserting, prev);
-                /* Need to fix issues arising from if the root node is split and how
-                /* to re-attatch the new root to the tree. */
-                /* Maybe try passing through the tree itself? */
+                // split root branch and break loop
+                if (curr == tree->root) {cond = 1;}
+                branch_t *new = split_branches(curr, inserting);
+                if (cond) {
+                    tree->root = new;
+                }
+                else {
+                    // Determine new branch's parent and attatch it
+                    if (new->prefix[0] == '0') {
+                        prev->branchA = new;
+                    }
+                    else {
+                        prev->branchB = new; 
+                    }
+                }
+                cond = 0;
+                break;
             }
             else {
-                /* Keep traversing case */
-                /* In this case the prefix bits in curr->prefix */
-                /* must be removed from inserting->prefix */
-                /* In the case that the branch path chosen to take is NULL we want
-                /* to place the node with the remaining prefix there */
+                // remove bits prefix from inserting
+                inserting->prefix = remove_bits(inserting->prefix, curr->prefix_bits);
+                inserting->prefix_bits = strlen(inserting->prefix);
+                // Take branch A
+                if (inserting->prefix[0] == 0) {
+                    // If NULL place branch
+                    if (curr->branchA == NULL) {
+                        curr->branchA = inserting;      // Inserted
+                        break;
+                    }
+                    // Else traverse
+                    else {
+                        prev = curr;
+                        curr = curr->branchA;
+                    }
+                }
+                // Take branch B
+                else {
+                    if (curr->branchB == NULL) {
+                        // If NULL place
+                        if (curr->branchB == NULL) {
+                            curr->branchB = inserting;
+                            break;
+                        }
+                        // Else traverse
+                        else {
+                            prev = curr;
+                            curr = curr->branchB;
+                        }
+                    }
+                }
             }
-            prev = curr;
-            /* Decide next branch*/
         }
     }
+    return tree;
 }
 
 /**
@@ -208,17 +281,17 @@ compare_prefix(char *curr_prefix, char *insert_prefix) {
     return -1;
 }
 
-void
-split_nodes(node_t *curr, node_t *inserting, node_t *prev) {
-    node_t *new = malloc(sizeof(node_t));
+branch_t*
+split_branches(branch_t *curr, branch_t *inserting) {
+    branch_t *new = malloc(sizeof(branch_t));
     new->prefix = get_common_prefix(curr->prefix, inserting->prefix);
     new->prefix_bits = strlen(new->prefix);
 
-    /* CHANGE REMAINING PREFIX IN THE "CURR" AND "INSERTING" NODES  m */
+    /* CHANGE REMAINING PREFIX IN THE "CURR" AND "INSERTING" branchS  m */
     curr->prefix = remove_bits(curr->prefix, new->prefix_bits);
     inserting->prefix = remove_bits(inserting->prefix, new->prefix_bits);
 
-    // Attatch the leaf nodes
+    // Attatch the leaf branchs
     if (curr->prefix[0] == '0') {
         new->branchA = curr;
         new->branchB = inserting;
@@ -227,14 +300,7 @@ split_nodes(node_t *curr, node_t *inserting, node_t *prev) {
         new->branchA = inserting;   // might need to check which leads where
         new->branchB = curr;
     }
-
-    // Determine new node's parent and attatch it
-    if (new->prefix[0] == '0') {
-        prev->branchA = new;
-    }
-    else {
-        prev->branchB = new; 
-    }
+    return new;
 }
 
 /**
@@ -251,7 +317,7 @@ get_common_prefix(char *curr_prefix, char *insert_prefix) {
     for (int i = 0; curr_prefix[i] != '\0' && insert_prefix[i] != '\0'; i++) {
         if (size < max_size) {
             if (curr_prefix[i] == insert_prefix[i]) {
-                output[size] = curr_prefix;
+                output[size] = curr_prefix[i];
                 size++;
             }
             else {
@@ -265,10 +331,10 @@ get_common_prefix(char *curr_prefix, char *insert_prefix) {
         }
     }
     output[size] = '\0';
-    temp = output;
-    output = strdup(temp);
-    free(temp);
-    return output;
+    temp = malloc(sizeof(char) * size);
+    strcpy(temp, output);
+    free(output);
+    return temp;
 }
 
 /**
@@ -286,9 +352,29 @@ remove_bits(char *prefix, int bits) {
         index++;
     }
     output[index] = '\0';
-    temp = output;
-    output = strdup(temp);
+    temp = malloc(sizeof(char) * index);
+    strcpy(temp, output);
+    free(output);
     free(prefix);
-    free(temp);
     return output;
+}
+
+/**
+ * Function: output_tree
+ * --------------------- 
+*/
+void
+output_tree(branch_t *root, FILE *output_file) {
+    if (root->data.trading_name != NULL) {
+        output_business(root->data, output_file);
+        printf("\n\n\nyes\n\n\n");
+    }
+    if (root->branchA != NULL) {
+        output_tree(root->branchA, output_file);
+        printf("\n\n\nyes\n\n\n");
+    }
+    if (root->branchB != NULL) {
+        output_tree(root->branchA, output_file);
+        printf("\n\n\nyes\n\n\n");
+    }
 }

@@ -16,11 +16,9 @@ main (int argc, char *argv[]) {
         case 2:
             stage_two(data_file, output_file);
             break;
-        /*
-        *
-        * Future cases for next stages here
-        *
-        */
+        case 3:
+            stage_three(data_file, output_file);
+            break;
     }
     
     fclose(data_file);

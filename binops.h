@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #ifndef _BINOPS_H_
 #define _BINOPS_H_

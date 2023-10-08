@@ -5,7 +5,7 @@ CFLAGS = -Wall -g
 LDLIBS = 
 
 # Define sets of source files and object files
-SRC = main.c data.c list.c query.c utils.c stages.c array.c quicksort.c binarysearch.c radixtree.c binops.c
+SRC = main.c data.c list.c query.c utils.c stages.c array.c quicksort.c binarysearch.c binops.c radixtree.c
 # OBJ is the same as SRC, just replace .c with .o
 OBJ = $(SRC:.c=.o)
  

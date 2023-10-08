@@ -10,6 +10,7 @@ char*
 char_to_binary(char c) {
 
     char *bin_rep = malloc(9 * sizeof(char));
+    assert(bin_rep);
 
     for (int j = 7; j >= 0; j--) {
         bin_rep[7 - j] = ((c >> j) & 1) ? '1' : '0';
@@ -27,16 +28,25 @@ char_to_binary(char c) {
 */
 char*
 string_to_binary(char *input) {
-
+    
     // Iterate through each character in the input string
     char *output = malloc(((strlen(input) + 1) * 8 + 1) * sizeof(char));
+    assert(output);
+    int index = 0;
 
-    for (int i = 0; i < strlen(input); i++) {
-        char *bin_rep = charToBinary(input[i]);
-        strcat(output, bin_rep);
+    for (int i = 0; input[i] != '\0'; i++) {
+        char *bin_rep = char_to_binary(input[i]);
+        for (int j = 0; j < 8; j++) {
+            output[index] = bin_rep[j];
+            index++;
+        }
         free(bin_rep);
     }
     
-    strcat(output, "00000000");
+    for (int i = 0; i < 8; i++) {
+        output[index] = '0';
+        index++;
+    }
+    output[index] = '\0';
     return output;
 }
